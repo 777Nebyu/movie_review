@@ -73,6 +73,27 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (method === "PUT" && url.match(/^\/movies\/\d+$/)) {
+    const id = parseInt(url.split("/")[2]);
+    getRequestBody(req)
+      .then((updatedData) => {
+        const movies = readMovies();
+        const index = movies.findIndex((m) => m.id === id);
+
+        if (index === -1) {
+          sendResponse(res, 404, { message: "Movie not found" });
+        } else {
+          movies[index] = { id, ...updatedData };
+          writeMovies(movies);
+          sendResponse(res, 200, movies[index]);
+        }
+      })
+      .catch(() => {
+        sendResponse(res, 400, { message: "Invalid JSON body" });
+      });
+    return;
+  }
+
   sendResponse(res, 404, { message: "Route not found" });
 });
 
