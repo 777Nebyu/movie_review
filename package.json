@@ -1,0 +1,12 @@
+{
+  "name": "movie_review",
+  "version": "1.0.0",
+  "description": "A simple Movie Review REST API using Node.js",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["movie", "review", "api", "nodejs"],
+  "author": "",
+  "license": "ISC"
+}

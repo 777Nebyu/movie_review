@@ -1,0 +1,17 @@
+[
+{
+    "id": 1,
+    "title": "Inception",
+    "year": 2010,
+    "director": "Christopher Nolan",
+    "rating": 8.8
+},
+  {
+    "id": 2,
+    "title": "The Dark Knight",
+    "year": 2008,
+    "director": "Christopher Nolan",
+    "rating": 9.0
+  }
+
+]
