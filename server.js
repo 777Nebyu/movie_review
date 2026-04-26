@@ -10,9 +10,29 @@ function readMovies() {
   return JSON.parse(data);
 }
 
+function writeMovies(movies) {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(movies, null, 2));
+}
+
 function sendResponse(res, statusCode, data) {
   res.writeHead(statusCode, { "Content-Type": "application/json" });
   res.end(JSON.stringify(data));
+}
+
+function getRequestBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+    req.on("end", () => {
+      try {
+        resolve(JSON.parse(body));
+      } catch (err) {
+        reject(err);
+      }
+    });
+  });
 }
 
 const server = http.createServer((req, res) => {
@@ -34,6 +54,22 @@ const server = http.createServer((req, res) => {
     } else {
       sendResponse(res, 404, { message: "Movie not found" });
     }
+    return;
+  }
+
+  if (method === "POST" && url === "/movies") {
+    getRequestBody(req)
+      .then((newMovie) => {
+        const movies = readMovies();
+        const id = movies.length > 0 ? movies[movies.length - 1].id + 1 : 1;
+        const movie = { id, ...newMovie };
+        movies.push(movie);
+        writeMovies(movies);
+        sendResponse(res, 201, movie);
+      })
+      .catch(() => {
+        sendResponse(res, 400, { message: "Invalid JSON body" });
+      });
     return;
   }
 
