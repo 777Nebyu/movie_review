@@ -94,6 +94,21 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (method === "DELETE" && url.match(/^\/movies\/\d+$/)) {
+    const id = parseInt(url.split("/")[2]);
+    const movies = readMovies();
+    const index = movies.findIndex((m) => m.id === id);
+
+    if (index === -1) {
+      sendResponse(res, 404, { message: "Movie not found" });
+    } else {
+      const deleted = movies.splice(index, 1);
+      writeMovies(movies);
+      sendResponse(res, 200, { message: "Movie deleted", movie: deleted[0] });
+    }
+    return;
+  }
+
   sendResponse(res, 404, { message: "Route not found" });
 });
 
